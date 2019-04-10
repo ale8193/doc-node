@@ -38,4 +38,4 @@ class Backup {
   }
 }
 
-export default Backup
+module.exports = Backup
