@@ -13,7 +13,7 @@ const dockerVolumes = require('plugins/docker/volumes')
  * module:Controllers/volumesController~volumesListGET
  */
 const volumesListGET = (req, res, next) => dockerVolumes.listVolumes()
-  .then(volumes => baseController.successResponse(volumes)).catch(next)
+  .then(volumes => baseController.successResponse(res, volumes)).catch(next)
 
 module.exports = {
   volumesListGET

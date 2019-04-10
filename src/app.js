@@ -8,13 +8,6 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const app = express()
 
-const config = {
-  api_version: {
-    enum: ['v1'],
-    default: 'v1'
-  }
-}
-
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -28,8 +21,8 @@ app.use(cookieParser())
 const containersRouter = require('routes/api/containers')
 const volumesRouter = require('routes/api/volumes')
 
-app.use('api/' + config.api_version.default + '/containers', containersRouter)
-app.use('api/' + config.api_version.default + '/volumes', volumesRouter)
+app.use('/api/v' + process.env.npm_package_version + '/containers', containersRouter)
+app.use('/api/v' + process.env.npm_package_version + '/volumes', volumesRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
