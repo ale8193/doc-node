@@ -3,6 +3,7 @@
  */
 
 const webdavSender = require('webdav')
+const { removeFileFromDir } = require('utility/utility')
 
 /**
  * Function to send a backup based on the configuration, specified in the config file
@@ -15,12 +16,10 @@ const sendBackup = (filepath, filename) => {
   return new Promise((resolve, reject) => {
     // Invio su webdav
     const putFilePromise = webdavSender.putFile(filepath, filename)
-    // Elimino i file di backup nell'host
-    /* TODO */
-
+    // Elimino i file di backup nell'host e risolvo la promise
     putFilePromise
-      .then(() => resolve({ sended: true }))
-      .catch(err => reject(err))
+      .then(() => removeFileFromDir(filepath).then(() => resolve({ sended: true })))
+      .catch(reject)
   })
 }
 
