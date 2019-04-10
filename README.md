@@ -20,3 +20,9 @@ yarn install
 # start server
 yarn start
 ```
+
+### Generate documentation
+The documentation of the code will be generated inside `<project_root>/docs`using the following command:
+```
+yarn docs
+```
