@@ -4,6 +4,7 @@
 const Docker = require('dockerode')
 const path = require('path')
 const BackupObject = require('model/Backup')
+const { createDirectory } = require('utility/utility')
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
@@ -46,6 +47,9 @@ const backupContainer = (containerName, backupFile, volume, storePath = path.joi
     containerName: containerName,
     backupName: backupFile
   })
+
+  // create storePath folder if not exist
+  createDirectory(storePath)
 
   // docker run --rm --volumes-from <container_name> -v $(pwd):/backup ubuntu tar cvf /backup/<name_backup>.tar <container_volume_name>
   const cmd = ['tar', 'cvf', '/backup/' + backupObject.toString('.tar'), volume]
