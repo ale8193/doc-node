@@ -1,6 +1,7 @@
 /** Utility methods module
  * @module Utility
  */
+const fs = require('fs')
 
 /**
  * Function to convert a date into a human readable string (`DD-MM-YYYY-HH-mm-ss`)
@@ -8,7 +9,7 @@
  * @returns {string} - return a string of the date
  * module:Utility~dateToString
  */
-exports.dateToString = (date) => {
+exports.dateToString = date => {
   let hour = date.getHours()
   hour = (hour < 10 ? '0' : '') + hour
 
@@ -27,4 +28,14 @@ exports.dateToString = (date) => {
   day = (day < 10 ? '0' : '') + day
 
   return day + '-' + month + '-' + year + '-' + hour + '-' + min + '-' + sec
+}
+
+/**
+ * Function to create a folder if not exist
+ * @param {string} path - the path of the folder to create
+ */
+exports.createDirectory = path => {
+  if (!fs.existsSync(path)){
+    fs.mkdirSync(path);
+  }
 }
