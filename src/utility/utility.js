@@ -35,7 +35,7 @@ exports.dateToString = date => {
  * @param {string} path - the path of the folder to create
  */
 exports.createDirectory = path => {
-  if (!fs.existsSync(path)){
-    fs.mkdirSync(path);
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path)
   }
 }

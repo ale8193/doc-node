@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  webdav:
+    image: morrisjobke/webdav
+    ports:
+      - "8888:80"
+    environment:
+      - USERNAME=${WEBDAV_USERNAME:-admin}
+      - PASSWORD=${WEBDAV_PASSWORD:-admin}
