@@ -1,5 +1,5 @@
-const os = require('os')
-const { dateToString } = require('utility/utility')
+import os from 'os'
+import { dateToString } from 'utility/utility'
 
 const options = {
   separator: '_'

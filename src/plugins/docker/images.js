@@ -1,7 +1,7 @@
 /** Docker images wrapper that execute operations on host images
  * @module DockerWrapper/Images
  */
-const Docker = require('dockerode')
+import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
@@ -15,6 +15,6 @@ const pullContainer = (container) => {
   return docker.pull(container)
 }
 
-module.exports = {
+export {
   pullContainer
 }

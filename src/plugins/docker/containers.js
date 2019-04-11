@@ -1,10 +1,12 @@
 /** Docker containers wrapper that execute operations on host containers
  * @module DockerWrapper/Containers
  */
-const Docker = require('dockerode')
-const path = require('path')
-const BackupObject = require('model/Backup')
-const { createDirectory } = require('utility/utility')
+import BackupObject from 'model/Backup'
+
+import Docker from 'dockerode'
+import path from 'path'
+// const BackupObject = require('model/Backup')
+import { createDirectory } from 'utility/utility'
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
@@ -65,7 +67,7 @@ const backupContainer = (containerName, backupFile, volume, storePath = path.joi
     })
 }
 
-module.exports = {
+export {
   listContainers,
   getContainer,
   backupContainer
