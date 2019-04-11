@@ -1,5 +1,7 @@
 # DOC
 
+[![Join the chat at https://gitter.im/doc-node/community](https://badges.gitter.im/doc-node/community.svg)](https://gitter.im/doc-node/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Node service to execute backup 
 
 ### Set up
