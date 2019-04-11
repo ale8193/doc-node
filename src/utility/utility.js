@@ -2,6 +2,8 @@
  * @module Utility
  */
 const fs = require('fs')
+const fsPromises = require('fs').promises
+const path = require('path')
 
 /**
  * Function to convert a date into a human readable string (`DD-MM-YYYY-HH-mm-ss`)
@@ -38,4 +40,21 @@ exports.createDirectory = path => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path)
   }
+}
+
+/**
+ * Remove all files inside a directory
+ * @param {string} directory - directory path
+ * @returns {Promise} - return a Promise resolved when the directory is empty
+ */
+exports.removeFileFromDir = directory => {
+  return new Promise(((resolve, reject) => {
+    fsPromises.readdir(directory)
+      .then(files => {
+        const filesRemoved = files.map(file => fsPromises.unlink(path.join(directory, file)))
+        Promise.all(filesRemoved)
+          .then(resolve({ empty: true }))
+          .catch(reject)
+      })
+  }))
 }
