@@ -45,10 +45,7 @@ const getContainer = (id) => {
  * module:DockerWrapper/Containers~backupContainer
  */
 const backupContainer = (containerName, backupFile, volume, storePath = path.join(__dirname, '..', 'backups/')) => {
-  const backupObject = new BackupObject({
-    containerName: containerName,
-    backupName: backupFile
-  })
+  const backupObject = new BackupObject(containerName, backupFile)
 
   // create storePath folder if not exist
   createDirectory(storePath)

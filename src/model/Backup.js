@@ -11,16 +11,15 @@ const options = {
 class Backup {
   /**
    * @constructs Backup
-   * @param {Object} data - object containing params of the object
+   * @param {string} containerName - name of the container that hosts the volume backuped
+   * @param {string} backupName - name of the backup
    * @param {Object} opt - object containing options on the creation of the object, options are: - separator: {string} (default: '_')
-   * @param data
-   * @param opt
    */
-  constructor (data, opt) {
+  constructor (containerName, backupName, opt = {}) {
     Object.assign(options, opt)
 
-    this.containerName = data.containerName
-    this.backupName = data.backupName
+    this.containerName = containerName
+    this.backupName = backupName
     this.hostname = os.hostname()
     this.createdAt = new Date()
   }
