@@ -25,7 +25,7 @@ const errorResponse = (res, code, message) => {
   })
 }
 
-module.exports = {
+export {
   successResponse,
   errorResponse
 }

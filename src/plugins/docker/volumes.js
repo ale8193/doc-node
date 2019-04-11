@@ -2,7 +2,7 @@
  * @module DockerWrapper/Volumes
  */
 
-const Docker = require('dockerode')
+import Docker from 'dockerode'
 
 const docker = new Docker({ socketPath: '/var/run/docker.sock' })
 
@@ -17,6 +17,6 @@ const listVolumes = (options = {}) => {
   return docker.listVolumes(options)
 }
 
-module.exports = {
+export {
   listVolumes
 }

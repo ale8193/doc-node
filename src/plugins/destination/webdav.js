@@ -7,16 +7,16 @@
  * @module Sender/webdav
  */
 
-const { createClient } = require('webdav')
-const fs = require('fs')
-const path = require('path')
+import { createClient } from 'webdav'
+import fs from 'fs'
+import path from 'path'
 
 const config = {
   webdav: {
-    host: 'http://192.168.210.111:8888/webdav',
+    host: 'http://localhost:8888/webdav',
     path: '/backup',
     user: 'admin',
-    password: 'f0rzar0ma'
+    password: 'admin'
   }
 }
 
@@ -55,15 +55,17 @@ const putFile = (filepath, filename) => {
     // Get the stats of the file because contain the size of the file
     const stats = fs.statSync(fileCompletePath)
 
-    const readStream = fs.createReadStream(fileCompletePath)
+    const fileReadStream = fs.createReadStream(fileCompletePath)
       .on('error', reject)
-    const writeStream = client.createWriteStream(path.join(config.webdav.path, filename), { maxContentLength: stats.size })
-      .on('complete', resolve)
-    readStream.pipe(writeStream)
+    const fileWriteStream = client.createWriteStream(path.join(config.webdav.path, filename), { maxContentLength: stats.size })
+      .on('error', reject)
+
+    fileReadStream.pipe(fileWriteStream)
+      .on('finish', resolve)
   })
 }
 
-module.exports = {
+export {
   initBaseDirectory,
   putFile
 }

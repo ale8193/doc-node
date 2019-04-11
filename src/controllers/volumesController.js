@@ -2,8 +2,8 @@
  * @module Controllers/volumesController
  */
 
-const baseController = require('controllers/baseController')
-const dockerVolumes = require('plugins/docker/volumes')
+import * as baseController from 'controllers/baseController'
+import * as dockerVolumes from 'plugins/docker/volumes'
 
 /**
  * Allow to retrive all volume objects that are in the host machine (for additional information [Docker API Reference - volume list](https://docs.docker.com/engine/api/v1.39/#operation/VolumeList))
@@ -15,6 +15,6 @@ const dockerVolumes = require('plugins/docker/volumes')
 const volumesListGET = (req, res, next) => dockerVolumes.listVolumes()
   .then(volumes => baseController.successResponse(res, volumes)).catch(next)
 
-module.exports = {
+export {
   volumesListGET
 }

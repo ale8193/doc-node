@@ -2,8 +2,8 @@
  * @module Sender
  */
 
-const webdavSender = require('webdav')
-const { removeFileFromDir } = require('utility/utility')
+import * as webdavSender from 'plugins/destination/webdav'
+import { removeFileFromDir } from 'utility/utility'
 
 /**
  * Function to send a backup based on the configuration, specified in the config file
@@ -18,11 +18,14 @@ const sendBackup = (filepath, filename) => {
     const putFilePromise = webdavSender.putFile(filepath, filename)
     // Elimino i file di backup nell'host e risolvo la promise
     putFilePromise
-      .then(() => removeFileFromDir(filepath).then(() => resolve({ sended: true })))
+      .then(() =>
+        removeFileFromDir(filepath)
+          .then(() => resolve({ sended: true }))
+      )
       .catch(reject)
   })
 }
 
-module.exports = {
+export {
   sendBackup
 }

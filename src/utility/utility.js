@@ -1,9 +1,9 @@
 /** Utility methods module
  * @module Utility
  */
-const fs = require('fs')
-const fsPromises = require('fs').promises
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+const fsPromises = fs.promises
 
 /**
  * Function to convert a date into a human readable string (`DD-MM-YYYY-HH-mm-ss`)
@@ -11,7 +11,7 @@ const path = require('path')
  * @returns {string} - return a string of the date
  * module:Utility~dateToString
  */
-exports.dateToString = date => {
+const dateToString = date => {
   let hour = date.getHours()
   hour = (hour < 10 ? '0' : '') + hour
 
@@ -36,7 +36,7 @@ exports.dateToString = date => {
  * Function to create a folder if not exist
  * @param {string} path - the path of the folder to create
  */
-exports.createDirectory = path => {
+const createDirectory = path => {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path)
   }
@@ -47,14 +47,20 @@ exports.createDirectory = path => {
  * @param {string} directory - directory path
  * @returns {Promise} - return a Promise resolved when the directory is empty
  */
-exports.removeFileFromDir = directory => {
-  return new Promise(((resolve, reject) => {
+const removeFileFromDir = directory => {
+  return new Promise((resolve, reject) => {
     fsPromises.readdir(directory)
       .then(files => {
         const filesRemoved = files.map(file => fsPromises.unlink(path.join(directory, file)))
         Promise.all(filesRemoved)
           .then(resolve({ empty: true }))
-          .catch(reject)
       })
-  }))
+      .catch(reject)
+  })
+}
+
+export {
+  dateToString,
+  createDirectory,
+  removeFileFromDir
 }

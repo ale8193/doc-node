@@ -2,10 +2,10 @@
  * @module Controllers/containersController
  */
 
-const baseController = require('controllers/baseController')
-const dockerContainers = require('plugins/docker/containers')
-const sender = require('plugins/destination/sender')
-const path = require('path')
+import * as baseController from 'controllers/baseController'
+import * as dockerContainers from 'plugins/docker/containers'
+import * as sender from 'plugins/destination/sender'
+import path from 'path'
 
 /**
  * Allow to retrive all containers object that are running in the host machine (for additional information [Docker API Reference - container list](https://docs.docker.com/engine/api/v1.39/#operation/ContainerList))
@@ -82,7 +82,7 @@ const sendBackups = backups => {
   ))
 }
 
-module.exports = {
+export {
   containerListGET,
   containerBackupPOST
 }
