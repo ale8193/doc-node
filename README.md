@@ -24,7 +24,10 @@ yarn start
 ```
 
 ### Generate documentation
+##### Code documentation
 The documentation of the code will be generated inside `<project_root>/docs`using the following command:
 ```
 yarn docs
 ```
+##### Swagger api documentation
+The `swagger.yml` with the openapi documentation is provided inside the root of the project.
