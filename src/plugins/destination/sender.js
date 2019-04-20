@@ -5,6 +5,15 @@
 import * as webdavSender from 'plugins/destination/webdav'
 import { removeFileFromDir } from 'utility/utility'
 
+const config = {
+  webdav: {
+    host: 'http://localhost:8888/webdav',
+    path: '/backup',
+    user: 'admin',
+    password: 'admin'
+  }
+}
+
 /**
  * Function to send a backup based on the configuration, specified in the config file
  * @param {string} filepath - path of the folder in which is saved the backup file
@@ -14,14 +23,22 @@ import { removeFileFromDir } from 'utility/utility'
  */
 const sendBackup = (filepath, filename) => {
   return new Promise((resolve, reject) => {
-    // Invio su webdav
-    const putFilePromise = webdavSender.putFile(filepath, filename)
-    // Elimino i file di backup nell'host e risolvo la promise
-    putFilePromise
-      .then(() =>
-        removeFileFromDir(filepath)
-          .then(() => resolve({ sended: true }))
-      )
+    // Init the webdav sender
+    webdavSender.init(config.webdav.user, config.webdav.password, {
+      host: config.webdav.host,
+      path: config.webdav.path
+    })
+      .then(() => {
+        // Invio su webdav
+        const putFilePromise = webdavSender.putFile(filepath, filename)
+        // Elimino i file di backup nell'host e risolvo la promise
+        putFilePromise
+          .then(() =>
+            removeFileFromDir(filepath)
+              .then(() => resolve({ sended: true }))
+          )
+          .catch(reject)
+      })
       .catch(reject)
   })
 }

@@ -11,45 +11,76 @@ import { createClient } from 'webdav'
 import fs from 'fs'
 import path from 'path'
 
-const config = {
-  webdav: {
-    host: 'http://localhost:8888/webdav',
-    path: '/backup',
-    user: 'admin',
-    password: 'admin'
-  }
-}
+let client = null
 
-/* TODO Far vedere ad Eugenio come fargli arrivare user e password in maniera pulita */
-const client = createClient(
-  config.webdav.host,
-  {
-    username: config.webdav.user,
-    password: config.webdav.password
-  }
-)
+const config = {}
+
+/**
+ * Function to init the webdav client, should be initialized to establish the connection with the server.
+ * The init function create also the backup root folder of the webdav server, where backups will be saved
+ * @param {string} username - username to access the webdav server
+ * @param {string} password - password to access the webdav server
+ * @param {Object} options - object with configuration to init the client, must contain:
+ *  - `host` the webdav complete host url (ex. `http://localhost:8888/webdav`)
+ *  - `path` the path to use as root for the backups (ex. `/backup`)
+ * @returns {Promise} - return a promise resolved when the initialization process is complete, rejected otherwise
+ * module:Sender/webdav~init
+ */
+const init = (username, password, options) => {
+  return new Promise((resolve, reject) => {
+    if (!options.host || !options.path) {
+      reject(new Error('Options object must have host and path value'))
+    }
+
+    // The client has already been initialized, nothing necessary to be done
+    if (client && config.path) {
+      resolve(true)
+    }
+
+    // Init the client
+    client = createClient(
+      options.host,
+      {
+        username,
+        password
+      }
+    )
+
+    // Save the config about the basepath
+    config.path = options.path
+
+    // Init the basepath
+    initBaseDirectory(options.path).then(resolve(true)).catch(reject)
+  })
+}
 
 /**
  * Function to create the basepath into the webdav server (the location is specified in the configuration file)
+ * @param {string} dirPath - path of the folder to create as basepath
+ * @throws Will throw an error if the webdav client has not been initialized.
  * @returns {Promise}
  * module:Sender/webdav~initBaseDirectory
  */
-const initBaseDirectory = () => {
-  return client.createDirectory(config.webdav.path)
+const initBaseDirectory = (dirPath) => {
+  if (!client) {
+    throw new Error('Client object not initialized')
+  }
+  return client.createDirectory(dirPath)
 }
-
-// Init the base directory
-initBaseDirectory()
 
 /**
  * Put a file inside the webdav server
  * @param {string} filepath - path of the folder in which is saved the backup file
  * @param {string} filename - name of the backup file
+ * @throws Will throw an error if the webdav client has not been initialized.
  * @returns {Promise}
  * module:Sender/webdav~putFile
  */
 const putFile = (filepath, filename) => {
   return new Promise((resolve, reject) => {
+    if (!client) {
+      reject(new Error('Client object not initialized'))
+    }
     // Join the filepath with the filename
     const fileCompletePath = path.join(filepath, filename)
     // Get the stats of the file because contain the size of the file
@@ -57,7 +88,7 @@ const putFile = (filepath, filename) => {
 
     const fileReadStream = fs.createReadStream(fileCompletePath)
       .on('error', reject)
-    const fileWriteStream = client.createWriteStream(path.join(config.webdav.path, filename), { maxContentLength: stats.size })
+    const fileWriteStream = client.createWriteStream(path.join(config.path, filename), { maxContentLength: stats.size })
       .on('error', reject)
 
     fileReadStream.pipe(fileWriteStream)
@@ -66,6 +97,7 @@ const putFile = (filepath, filename) => {
 }
 
 export {
+  init,
   initBaseDirectory,
   putFile
 }

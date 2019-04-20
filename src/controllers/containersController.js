@@ -15,7 +15,7 @@ import path from 'path'
  * module:Controllers/containersController~containerListGET
  */
 const containerListGET = (req, res, next) => dockerContainers.listContainers()
-  .then(containers => baseController.successResponse(res, containers)).catch(next)
+  .then(containers => baseController.successResponse(res, { containers })).catch(next)
 
 /**
  * Create a backup file for each volumes mounted in the container
@@ -45,7 +45,7 @@ const containerBackupPOST = (req, res, next) => {
           const sendBackupPromises = sendBackups(backups)
 
           Promise.all(sendBackupPromises)
-            .then(() => baseController.successResponse(res, backups))
+            .then(() => baseController.successResponse(res, { backups }))
         })
     })
     .catch(err => next(err))

@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8889:8080"
+    environment:
+      - SWAGGER_JSON=${SWAGGER_JSON:-/mnt/swagger.json}
+      - BASE_URL=${BASE_URL:-/swagger-api}
+    volumes:
+      - "./swagger.json:/mnt/swagger.json"
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile-docs
+    ports:
+      - "80:80"

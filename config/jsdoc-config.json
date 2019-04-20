@@ -27,7 +27,7 @@
     "search": true,
     "menu": {
       "API-Docs": {
-        "href": "http://localhost:5555/api-docs",
+        "href": "http://localhost:8889/swagger-api",
         "target": "_blank",
         "class": "menu-item",
         "id": "api-docs"
