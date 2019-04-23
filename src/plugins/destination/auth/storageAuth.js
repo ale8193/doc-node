@@ -1,4 +1,4 @@
-/** 
+/**
  * Access storage's security informations in different modes
  * @module Sender/storageAuth
  */
@@ -21,7 +21,7 @@ const MODES = {
 }
 
 // TODO config file?
-const mode = process.env.STORAGE_AUTH_MODE|| process.argv[2] || MODES.DEFAULT
+const mode = process.env.STORAGE_AUTH_MODE || process.argv[2] || MODES.DEFAULT
 
 /**
  * Function to get username to access backup storage backend
@@ -36,18 +36,18 @@ const getUser = () => {
       case MODES.ENVIRONMENT:
         user = process.env.BACKUP_STORAGE_USER
         user ? resolve(user) : reject(new Error(error))
-        break;
+        break
       case MODES.PARAMETERS:
         user = process.argv[3]
         user ? resolve(user) : reject(new Error(error))
-        break;
-      case SECRETS:
-        user =  fs.readFileSync('/run/secrets/storage_user', 'utf8').trim()
+        break
+      case MODES.SECRETS:
+        user = fs.readFileSync('/run/secrets/storage_user', 'utf8').trim()
         user ? resolve(user) : reject(new Error(error))
-        break;
+        break
       case MODES.VAULT:
-        user = vault.getUser().then(result => resolve(result)).catch(err => reject(new Error(error)))
-        break;
+        user = vault.getUser().then(result => resolve(result)).catch(err => reject(new Error(err)))
+        break
       default:
         resolve(defaultUser)
     }
@@ -61,7 +61,7 @@ const getUser = () => {
  */
 const getPassword = () => {
   return new Promise((resolve, reject) => {
-    
+    resolve(defaultPassword)
   })
 }
 
@@ -72,13 +72,12 @@ const getPassword = () => {
  */
 const getToken = () => {
   return new Promise((resolve, reject) => {
-    reject(new Error('Not implemented'))
+    resolve(defaultToken)
   })
 }
 
 export {
-  getUsername,
+  getUser,
   getPassword,
   getToken
 }
-
