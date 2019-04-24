@@ -3,11 +3,10 @@
  * @module Sender/storageAuth
  */
 import fs from 'fs'
-import * as vault from 'auth/vaultClient'
+import * as vault from './vaultClient'
 
 const defaultUser = 'admin'
 const defaultPassword = 'admin'
-const defaultToken = 'token'
 
 /**
  * Where to get the informations
@@ -21,7 +20,7 @@ const MODES = {
 }
 
 // TODO config file?
-const mode = process.env.STORAGE_AUTH_MODE || process.argv[2] || MODES.DEFAULT
+const mode = process.env.STORAGE_AUTH_MODE || MODES.VAULT
 
 /**
  * Function to get username to access backup storage backend
@@ -61,7 +60,27 @@ const getUser = () => {
  */
 const getPassword = () => {
   return new Promise((resolve, reject) => {
-    resolve(defaultPassword)
+    let error = 'Password not found in ' + mode
+    let password
+    switch (mode) {
+      case MODES.ENVIRONMENT:
+        password = process.env.BACKUP_STORAGE_PASSWORD
+        password ? resolve(password) : reject(new Error(error))
+        break
+      case MODES.PARAMETERS:
+        password = process.argv[4]
+        password ? resolve(password) : reject(new Error(error))
+        break
+      case MODES.SECRETS:
+        password = fs.readFileSync('/run/secrets/storage_password', 'utf8').trim()
+        password ? resolve(password) : reject(new Error(error))
+        break
+      case MODES.VAULT:
+        password = vault.getPassword().then(result => resolve(result)).catch(err => reject(new Error(err)))
+        break
+      default:
+        resolve(defaultPassword)
+    }
   })
 }
 
@@ -72,7 +91,7 @@ const getPassword = () => {
  */
 const getToken = () => {
   return new Promise((resolve, reject) => {
-    resolve(defaultToken)
+    reject(new Error('Not implemented'))
   })
 }
 
