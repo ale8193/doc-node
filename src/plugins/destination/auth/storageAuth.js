@@ -1,6 +1,7 @@
 /**
  * Access storage's security informations in different modes
  * @module Sender/storageAuth
+ * Secrets Mode need swarm and compose: https://daten-und-bass.io/blog/using-docker-secrets-with-nodejs/
  */
 import fs from 'fs'
 import * as vault from './vaultClient'
