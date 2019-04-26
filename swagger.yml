@@ -25,13 +25,13 @@ tags:
   description: Volumes API
 
 paths:
-  /containers/list:
+  /containers/:
     get:
       tags:
       - container
       summary: Returns a list of active containers.
       description: Allow to retrive all containers object that are running in the host machine (for additional information [Docker API Reference - container list](https://docs.docker.com/engine/api/v1.39/#operation/ContainerList))
-      operationId: containerListGET
+      operationId: containersGET
       responses:
         200:
           description: A JSON array of container objects
@@ -44,6 +44,81 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Container'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /containers/{id}:
+    get:
+      tags:
+      - container
+      summary: Returns a container object.
+      description: Allow to retrive a single container object from those active in the host
+      operationId: containerByIdGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Id of the container in which perform the volumes backup
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON containing a container objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Container'
+        400:
+          description: Bad request. Container ID is required and must be a string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: A container with the specified ID was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          $ref: '#/components/responses/UnexpectedError'
+  /containers/{id}/mounts:
+    get:
+      tags:
+      - container
+      summary: Returns an array of mounts object.
+      description: Allow to retrive the mounts object list of a container from those active in the host
+      operationId: containerMountsGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Id of the container in which perform the volumes backup
+        schema:
+          type: string
+      responses:
+        200:
+          description: A JSON containing an array of mounts objects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Mount'
+        400:
+          description: Bad request. Container ID is required and must be a string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: A container with the specified ID was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         default:
           $ref: '#/components/responses/UnexpectedError'
   /containers/{id}/backup:
@@ -115,7 +190,7 @@ components:
       content:
         application/json:
           schema:
-            "$ref": "#/components/schemas/Error"
+            $ref: '#/components/schemas/Error'
   schemas:
     Port:
       type: object
@@ -173,7 +248,7 @@ components:
       type: object
       properties:
         IPAMConfig:
-          "$ref": "#/components/schemas/EndpointIPAMConfig"
+          $ref: '#/components/schemas/EndpointIPAMConfig'
         Links:
           type: array
           items:
@@ -295,7 +370,7 @@ components:
           description: The ports exposed by this container
           type: array
           items:
-            "$ref": "#/components/schemas/Port"
+            $ref: '#/components/schemas/Port'
         SizeRw:
           description: The size of files that have been created or changed by this
             container
@@ -329,11 +404,11 @@ components:
             Networks:
               type: object
               additionalProperties:
-                "$ref": "#/components/schemas/EndpointSettings"
+                $ref: '#/components/schemas/EndpointSettings'
         Mounts:
           type: array
           items:
-            "$ref": "#/components/schemas/Mount"
+            $ref: '#/components/schemas/Mount'
     Volume:
       type: object
       properties:
@@ -405,7 +480,7 @@ components:
       example:
         Name: tardis
         Driver: custom
-        Mountpoint: "/var/lib/docker/volumes/tardis"
+        Mountpoint: '/var/lib/docker/volumes/tardis'
         Status:
           hello: world
         Labels:
