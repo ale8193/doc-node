@@ -14,8 +14,10 @@ import path from 'path'
  * @param {function} next - the next middleware function
  * module:Controllers/containersController~containersGET
  */
-const containersGET = (req, res, next) => dockerContainers.listContainers()
-  .then(containers => baseController.successResponse(res, { containers })).catch(next)
+function containersGET (req, res, next) {
+  return dockerContainers.listContainers()
+    .then(containers => baseController.successResponse(res, { containers })).catch(next)
+}
 
 /**
  * Allow to retrive a container object by passing its ID
@@ -24,7 +26,7 @@ const containersGET = (req, res, next) => dockerContainers.listContainers()
  * @param {function} next - the next middleware function
  * module:Controllers/containersController~containerByIdGET
  */
-const containerByIdGET = (req, res, next) => {
+function containerByIdGET (req, res, next) {
   // Check if is present the id param otherwise raise an error
   if (req.params.id === undefined) {
     baseController.errorResponse(res, 400, 'Bad request. Container ID is required and must be a string')
@@ -42,7 +44,14 @@ const containerByIdGET = (req, res, next) => {
     .catch(err => next(err))
 }
 
-const containerMountsGET = (req, res, next) => {
+/**
+ * Allow to retrive an array of mount objects of a specified container
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @param {function} next - the next middleware function
+ * module:Controllers/containersController~containerMountsGET
+ */
+function containerMountsGET (req, res, next) {
   // Check if is present the id param otherwise raise an error
   if (req.params.id === undefined) {
     baseController.errorResponse(res, 400, 'Bad request. Container ID is required and must be a string')
@@ -67,7 +76,7 @@ const containerMountsGET = (req, res, next) => {
  * @param {function} next - the next middleware function
  * module:Controllers/containersController~containerBackupPOST
  */
-const containerBackupPOST = (req, res, next) => {
+function containerBackupPOST (req, res, next) {
   // Check if is present the id param otherwise raise an error
   if (req.params.id === undefined) {
     baseController.errorResponse(res, 400, 'Bad request. Container ID is required and must be a string')
@@ -98,8 +107,9 @@ const containerBackupPOST = (req, res, next) => {
  * Method that use docker plugin to create a backup for each volume of the container passed as argument
  * @param {Object} container - container object
  * @returns {Array.<Promise.<Backup>>} - return an array of promises each one resolved with a {@link Backup} object
+ * module:Controllers/containersController~executeContainerBackup
  */
-const executeContainerBackup = container => {
+function executeContainerBackup (container) {
   // Container object has an array of names and each one start with a /
   let containerName = container.Names[0] // Take the first element
   containerName = containerName.substring(1, containerName.length) // Remove the first char that is a /
@@ -117,8 +127,9 @@ const executeContainerBackup = container => {
  * Method that use sender plugin to send the backup created to the configurated save destination
  * @param {Array.<Backup>} backups - array of {@link Backup} object
  * @returns {Array.<Promise.<Backup>>} - return an array of promises
+ * module:Controllers/containersController~sendBackups
  */
-const sendBackups = backups => {
+function sendBackups (backups) {
   return backups.map(bkp => sender.sendBackup(
     path.join(__dirname, '..', 'backups'),
     bkp.toString('.tar')

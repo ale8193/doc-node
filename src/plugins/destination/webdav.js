@@ -26,7 +26,7 @@ const config = {}
  * @returns {Promise} - return a promise resolved when the initialization process is complete, rejected otherwise
  * module:Sender/webdav~init
  */
-const init = (username, password, options) => {
+function init (username, password, options) {
   return new Promise((resolve, reject) => {
     if (!options.host || !options.path) {
       reject(new Error('Options object must have host and path value'))
@@ -34,7 +34,7 @@ const init = (username, password, options) => {
 
     // The client has already been initialized, nothing necessary to be done
     if (client && config.path) {
-      resolve(true)
+      return resolve(true)
     }
 
     // Init the client
@@ -61,7 +61,7 @@ const init = (username, password, options) => {
  * @returns {Promise}
  * module:Sender/webdav~initBaseDirectory
  */
-const initBaseDirectory = (dirPath) => {
+function initBaseDirectory (dirPath) {
   if (!client) {
     throw new Error('Client object not initialized')
   }
@@ -76,7 +76,7 @@ const initBaseDirectory = (dirPath) => {
  * @returns {Promise}
  * module:Sender/webdav~putFile
  */
-const putFile = (filepath, filename) => {
+function putFile (filepath, filename) {
   return new Promise((resolve, reject) => {
     if (!client) {
       reject(new Error('Client object not initialized'))

@@ -11,7 +11,7 @@ const fsPromises = fs.promises
  * @returns {string} - return a string of the date
  * module:Utility~dateToString
  */
-const dateToString = date => {
+function dateToString (date) {
   let hour = date.getHours()
   hour = (hour < 10 ? '0' : '') + hour
 
@@ -35,8 +35,9 @@ const dateToString = date => {
 /**
  * Function to create a folder if not exist
  * @param {string} path - the path of the folder to create
+ * module:Utility~createDirectory
  */
-const createDirectory = path => {
+function createDirectory (path) {
   if (!fs.existsSync(path)) {
     fs.mkdirSync(path)
   }
@@ -46,8 +47,9 @@ const createDirectory = path => {
  * Remove all files inside a directory
  * @param {string} directory - directory path
  * @returns {Promise} - return a Promise resolved when the directory is empty
+ * module:Utility~removeFileFromDir
  */
-const removeFileFromDir = directory => {
+function removeFileFromDir (directory) {
   return new Promise((resolve, reject) => {
     fsPromises.readdir(directory)
       .then(files => {
