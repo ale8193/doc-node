@@ -12,7 +12,7 @@ const docker = new Docker({ socketPath: '/var/run/docker.sock' })
  * @returns {Promise.<Array.<Object>>} - return a promise resolved with an array of volume object
  * module:DockerWrapper/Volumes~listVolumes
  */
-const listVolumes = (options = {}) => {
+function listVolumes (options = {}) {
   // const docker = new Docker({socketPath: '/var/run/docker.sock'});
   return docker.listVolumes(options)
 }

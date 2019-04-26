@@ -21,7 +21,7 @@ const config = {
  * @returns {Promise<Object>} - return a promise resolved with an object `{sended: true}`
  * module:Sender~sendBackup
  */
-const sendBackup = (filepath, filename) => {
+function sendBackup (filepath, filename) {
   return new Promise((resolve, reject) => {
     // Init the webdav sender
     webdavSender.init(config.webdav.user, config.webdav.password, {

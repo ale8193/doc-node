@@ -11,7 +11,7 @@ const docker = new Docker({ socketPath: '/var/run/docker.sock' })
  * @returns {Promise.<T>} - return a promise
  * module:DockerWrapper/Images~pullContainer
  */
-const pullContainer = (container) => {
+function pullContainer (container) {
   return docker.pull(container)
 }
 

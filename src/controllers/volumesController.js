@@ -12,8 +12,10 @@ import * as dockerVolumes from 'plugins/docker/volumes'
  * @param {function} next - the next middleware function
  * module:Controllers/volumesController~volumesListGET
  */
-const volumesListGET = (req, res, next) => dockerVolumes.listVolumes()
-  .then(volumes => baseController.successResponse(res, { volumes })).catch(next)
+function volumesListGET (req, res, next) {
+  return dockerVolumes.listVolumes()
+    .then(volumes => baseController.successResponse(res, { volumes })).catch(next)
+}
 
 export {
   volumesListGET

@@ -16,7 +16,7 @@ const docker = new Docker({ socketPath: '/var/run/docker.sock' })
  * @returns {Promise.<Array.<Object>>} - return a promise resolved with an array of container object
  * module:DockerWrapper/Containers~listContainers
  */
-const listContainers = (options = {}) => {
+function listContainers (options = {}) {
   // const docker = new Docker({socketPath: '/var/run/docker.sock'});
   return docker.listContainers(options)
 }
@@ -27,7 +27,7 @@ const listContainers = (options = {}) => {
  * @returns {Promise.<Object>} - return a promise resolved with a container object
  * module:DockerWrapper/Containers~getContainer
  */
-const getContainer = (id) => {
+function getContainer (id) {
   return listContainers({
     filters: {
       id: [id]
@@ -44,7 +44,7 @@ const getContainer = (id) => {
  * @returns {Promise.<Backup>} - return a promise resolved with a {@link Backup} object
  * module:DockerWrapper/Containers~backupContainer
  */
-const backupContainer = (containerName, backupFile, volume, storePath = path.join(__dirname, '..', 'backups/')) => {
+function backupContainer (containerName, backupFile, volume, storePath = path.join(__dirname, '..', 'backups/')) {
   const backupObject = new BackupObject(containerName, backupFile)
 
   // create storePath folder if not exist
