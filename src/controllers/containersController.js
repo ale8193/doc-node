@@ -12,10 +12,53 @@ import path from 'path'
  * @param {Object} req - the request object
  * @param {Object} res - the response object
  * @param {function} next - the next middleware function
- * module:Controllers/containersController~containerListGET
+ * module:Controllers/containersController~containersGET
  */
-const containerListGET = (req, res, next) => dockerContainers.listContainers()
+const containersGET = (req, res, next) => dockerContainers.listContainers()
   .then(containers => baseController.successResponse(res, { containers })).catch(next)
+
+/**
+ * Allow to retrive a container object by passing its ID
+ * @param {Object} req - the request object
+ * @param {Object} res - the response object
+ * @param {function} next - the next middleware function
+ * module:Controllers/containersController~containerByIdGET
+ */
+const containerByIdGET = (req, res, next) => {
+  // Check if is present the id param otherwise raise an error
+  if (req.params.id === undefined) {
+    baseController.errorResponse(res, 400, 'Bad request. Container ID is required and must be a string')
+  }
+  dockerContainers.getContainer(req.params.id)
+    .then(container => {
+      // Check if the container request exists otherwise raise an error
+      if (!container) {
+        return baseController.errorResponse(res, 404, 'A container with the specified ID was not found')
+      }
+
+      // Return the volumes
+      return baseController.successResponse(res, container)
+    })
+    .catch(err => next(err))
+}
+
+const containerMountsGET = (req, res, next) => {
+  // Check if is present the id param otherwise raise an error
+  if (req.params.id === undefined) {
+    baseController.errorResponse(res, 400, 'Bad request. Container ID is required and must be a string')
+  }
+  dockerContainers.getContainer(req.params.id)
+    .then(container => {
+      // Check if the container request exists otherwise raise an error
+      if (!container) {
+        return baseController.errorResponse(res, 404, 'A container with the specified ID was not found')
+      }
+
+      // Return the mounts
+      return baseController.successResponse(res, { mounts: container.Mounts })
+    })
+    .catch(err => next(err))
+}
 
 /**
  * Create a backup file for each volumes mounted in the container
@@ -83,6 +126,8 @@ const sendBackups = backups => {
 }
 
 export {
-  containerListGET,
+  containersGET,
+  containerByIdGET,
+  containerMountsGET,
   containerBackupPOST
 }
