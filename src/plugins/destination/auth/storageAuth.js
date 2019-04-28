@@ -19,7 +19,49 @@ const MODES = {
   DEFAULT: 'default'
 }
 
-const mode = process.env.STORAGE_AUTH_MODE || MODES.VAULT
+const mode = process.env.STORAGE_AUTH_MODE || MODES.DEFAULT
+
+const userGetter = {
+  [MODES.ENVIRONMENT]: (resolve, reject, errorMsg) => {
+    let user = process.env.BACKUP_STORAGE_USER
+    user ? resolve(user) : reject(new Error(errorMsg))
+  },
+  [MODES.PARAMETERS]: (resolve, reject, errorMsg) => {
+    let user = process.argv[3]
+    user ? resolve(user) : reject(new Error(errorMsg))
+  },
+  [MODES.SECRETS]: (resolve, reject, errorMsg) => {
+    let user = fs.readFileSync('/run/secrets/storage_user', 'utf8').trim()
+    user ? resolve(user) : reject(new Error(errorMsg))
+  },
+  [MODES.VAULT]: (resolve, reject) => {
+    vault.getUser().then(result => resolve(result)).catch(err => reject(new Error(err)))
+  },
+  [MODES.DEFAULT]: (resolve) => {
+    resolve(defaultUser)
+  }
+}
+
+const passwordGetter = {
+  [MODES.ENVIRONMENT]: (resolve, reject, errorMsg) => {
+    let password = process.env.BACKUP_STORAGE_PASSWORD
+    password ? resolve(password) : reject(new Error(errorMsg))
+  },
+  [MODES.PARAMETERS]: (resolve, reject, errorMsg) => {
+    let password = process.argv[4]
+    password ? resolve(password) : reject(new Error(errorMsg))
+  },
+  [MODES.SECRETS]: (resolve, reject, errorMsg) => {
+    let password = fs.readFileSync('/run/secrets/storage_password', 'utf8').trim()
+    password ? resolve(password) : reject(new Error(errorMsg))
+  },
+  [MODES.VAULT]: (resolve, reject) => {
+    vault.getPassword().then(result => resolve(result)).catch(err => reject(new Error(err)))
+  },
+  [MODES.DEFAULT]: (resolve) => {
+    resolve(defaultPassword)
+  }
+}
 
 /**
  * Function to get username to access backup storage backend
@@ -28,27 +70,7 @@ const mode = process.env.STORAGE_AUTH_MODE || MODES.VAULT
  */
 function getUser () {
   return new Promise((resolve, reject) => {
-    let error = 'User not found in ' + mode
-    let user
-    switch (mode) {
-      case MODES.ENVIRONMENT:
-        user = process.env.BACKUP_STORAGE_USER
-        user ? resolve(user) : reject(new Error(error))
-        break
-      case MODES.PARAMETERS:
-        user = process.argv[3]
-        user ? resolve(user) : reject(new Error(error))
-        break
-      case MODES.SECRETS:
-        user = fs.readFileSync('/run/secrets/storage_user', 'utf8').trim()
-        user ? resolve(user) : reject(new Error(error))
-        break
-      case MODES.VAULT:
-        user = vault.getUser().then(result => resolve(result)).catch(err => reject(new Error(err)))
-        break
-      default:
-        resolve(defaultUser)
-    }
+    userGetter[mode](resolve, reject, 'User not found in ' + mode)
   })
 }
 
@@ -59,27 +81,7 @@ function getUser () {
  */
 function getPassword () {
   return new Promise((resolve, reject) => {
-    let error = 'Password not found in ' + mode
-    let password
-    switch (mode) {
-      case MODES.ENVIRONMENT:
-        password = process.env.BACKUP_STORAGE_PASSWORD
-        password ? resolve(password) : reject(new Error(error))
-        break
-      case MODES.PARAMETERS:
-        password = process.argv[4]
-        password ? resolve(password) : reject(new Error(error))
-        break
-      case MODES.SECRETS:
-        password = fs.readFileSync('/run/secrets/storage_password', 'utf8').trim()
-        password ? resolve(password) : reject(new Error(error))
-        break
-      case MODES.VAULT:
-        password = vault.getPassword().then(result => resolve(result)).catch(err => reject(new Error(err)))
-        break
-      default:
-        resolve(defaultPassword)
-    }
+    passwordGetter[mode](resolve, reject, 'Password not found in ' + mode)
   })
 }
 
