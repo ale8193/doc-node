@@ -6,7 +6,7 @@
 const options = {
   apiVersion: 'v1',
   endpoint: 'http://192.168.210.138:8200',
-  token: process.env.TOKEN // TODO better?
+  token: process.env.VAULT_TOKEN
 }
 
 const vault = require('node-vault')(options)
