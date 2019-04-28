@@ -28,7 +28,7 @@ const mode = process.env.STORAGE_AUTH_MODE || MODES.VAULT
  * @returns {Promise}
  * module:Sender/storageAuth~getUser
  */
-const getUser = () => {
+function getUser () {
   return new Promise((resolve, reject) => {
     let error = 'User not found in ' + mode
     let user
@@ -59,7 +59,7 @@ const getUser = () => {
  * @returns {Promise}
  * module:Sender/storageAuth~getPassword
  */
-const getPassword = () => {
+function getPassword () {
   return new Promise((resolve, reject) => {
     let error = 'Password not found in ' + mode
     let password
@@ -90,7 +90,7 @@ const getPassword = () => {
  * @returns {Promise}
  * module:Sender/storageAuth~getToken
  */
-const getToken = () => {
+function getToken () {
   return new Promise((resolve, reject) => {
     reject(new Error('Not implemented'))
   })

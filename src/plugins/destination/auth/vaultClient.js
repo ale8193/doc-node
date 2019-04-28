@@ -11,7 +11,7 @@ const options = {
 
 const vault = require('node-vault')(options)
 
-const getUser = () => {
+function getUser () {
   return new Promise((resolve, reject) => {
     vault.read('kv/data/doc_storage/user').then(result => {
       let user = result.data.data.user
@@ -22,7 +22,7 @@ const getUser = () => {
   })
 }
 
-const getPassword = () => {
+function getPassword () {
   return new Promise((resolve, reject) => {
     vault.read('kv/data/doc_storage/password').then(result => {
       let pw = result.data.data.password
