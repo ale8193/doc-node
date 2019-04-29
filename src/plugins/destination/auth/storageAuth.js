@@ -19,47 +19,36 @@ const MODES = {
   DEFAULT: 'default'
 }
 
-const mode = process.env.STORAGE_AUTH_MODE || MODES.DEFAULT
-
-const userGetter = {
-  [MODES.ENVIRONMENT]: (resolve, reject, errorMsg) => {
-    let user = process.env.BACKUP_STORAGE_USER
-    user ? resolve(user) : reject(new Error(errorMsg))
-  },
-  [MODES.PARAMETERS]: (resolve, reject, errorMsg) => {
-    let user = process.argv[3]
-    user ? resolve(user) : reject(new Error(errorMsg))
-  },
-  [MODES.SECRETS]: (resolve, reject, errorMsg) => {
-    let user = fs.readFileSync('/run/secrets/storage_user', 'utf8').trim()
-    user ? resolve(user) : reject(new Error(errorMsg))
-  },
-  [MODES.VAULT]: (resolve, reject) => {
-    vault.getUser().then(result => resolve(result)).catch(err => reject(new Error(err)))
-  },
-  [MODES.DEFAULT]: (resolve) => {
-    resolve(defaultUser)
-  }
+/**
+ * What type of information
+ */
+const TYPES = {
+  USER: 'username',
+  PASSWORD: 'password'
 }
 
-const passwordGetter = {
-  [MODES.ENVIRONMENT]: (resolve, reject, errorMsg) => {
-    let password = process.env.BACKUP_STORAGE_PASSWORD
-    password ? resolve(password) : reject(new Error(errorMsg))
+const mode = process.env.STORAGE_AUTH_MODE || MODES.DEFAULT
+
+const authGetter = {
+  [MODES.ENVIRONMENT]: (type, resolve, reject, errorMsg) => {
+    let data = (type === TYPES.USER ? process.env.BACKUP_STORAGE_USER : process.env.BACKUP_STORAGE_PASSWORD)
+    data ? resolve(data) : reject(new Error(errorMsg))
   },
-  [MODES.PARAMETERS]: (resolve, reject, errorMsg) => {
-    let password = process.argv[4]
-    password ? resolve(password) : reject(new Error(errorMsg))
+  [MODES.PARAMETERS]: (type, resolve, reject, errorMsg) => {
+    let data = (type === TYPES.USER ? process.argv[3] : process.argv[4])
+    data ? resolve(data) : reject(new Error(errorMsg))
   },
-  [MODES.SECRETS]: (resolve, reject, errorMsg) => {
-    let password = fs.readFileSync('/run/secrets/storage_password', 'utf8').trim()
-    password ? resolve(password) : reject(new Error(errorMsg))
+  [MODES.SECRETS]: (type, resolve, reject, errorMsg) => {
+    let secretField = (type === TYPES.USER ? 'storage_user' : 'storage_password')
+    let data = fs.readFileSync('/run/secrets/' + secretField, 'utf8').trim()
+    data ? resolve(data) : reject(new Error(errorMsg))
   },
-  [MODES.VAULT]: (resolve, reject) => {
-    vault.getPassword().then(result => resolve(result)).catch(err => reject(new Error(err)))
+  [MODES.VAULT]: (type, resolve, reject) => {
+    let data = (type === TYPES.USER ? vault.getUser() : vault.getPassword())
+    data.then(result => resolve(result)).catch(err => reject(new Error(err)))
   },
-  [MODES.DEFAULT]: (resolve) => {
-    resolve(defaultPassword)
+  [MODES.DEFAULT]: (type, resolve) => {
+    (type === TYPES.USER ? resolve(defaultUser) : resolve(defaultPassword))
   }
 }
 
@@ -70,7 +59,7 @@ const passwordGetter = {
  */
 function getUser () {
   return new Promise((resolve, reject) => {
-    userGetter[mode](resolve, reject, 'User not found in ' + mode)
+    authGetter[mode](TYPES.USER, resolve, reject, 'User not found in ' + mode)
   })
 }
 
@@ -81,7 +70,7 @@ function getUser () {
  */
 function getPassword () {
   return new Promise((resolve, reject) => {
-    passwordGetter[mode](resolve, reject, 'Password not found in ' + mode)
+    authGetter[mode](TYPES.PASSWORD, resolve, reject, 'Password not found in ' + mode)
   })
 }
 
