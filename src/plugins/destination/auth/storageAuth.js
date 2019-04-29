@@ -10,6 +10,7 @@ const defaultPassword = 'admin'
 
 /**
  * Where to get the informations
+ * @enum {string}
  */
 const MODES = {
   ENVIRONMENT: 'environment',
@@ -21,6 +22,7 @@ const MODES = {
 
 /**
  * What type of information
+ * @enum {string}
  */
 const TYPES = {
   USER: 'username',
@@ -29,6 +31,17 @@ const TYPES = {
 
 const mode = process.env.STORAGE_AUTH_MODE || MODES.DEFAULT
 
+/**
+ * This object allows to get auth information based on modes and type resolving Promise callbacks. 
+ * How to use: authGetter\[mode\](type, resolve, reject, errorMsg)
+ * @function
+ * @name authGetter
+ * @param {string} mode - where get the information
+ * @param {string} type - what type of information,
+ * @param {string} resolve - the Promise resolve callback
+ * @param {string} reject - the Promise reject callback
+ * @param {string} errorMsg - an error message passed to reject error
+ */
 const authGetter = {
   [MODES.ENVIRONMENT]: (type, resolve, reject, errorMsg) => {
     let data = (type === TYPES.USER ? process.env.BACKUP_STORAGE_USER : process.env.BACKUP_STORAGE_PASSWORD)
