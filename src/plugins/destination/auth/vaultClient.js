@@ -3,13 +3,15 @@
  * https://github.com/kr1sp1n/node-vault/tree/master/example
  */
 
+import vaultAPI from 'node-vault'
+
 const options = {
   apiVersion: 'v1',
   endpoint: 'http://192.168.210.138:8200',
   token: process.env.VAULT_TOKEN
 }
 
-const vault = require('node-vault')(options)
+const vault = vaultAPI(options)
 const vaultStorage = 'kv/data/doc_storage/'
 
 function getUser () {
