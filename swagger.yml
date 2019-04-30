@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Deamon Backup API
+  title: Doc-Node API
   description: Deamon used to periodically generate volume's backup and send of this
-    backups
+    backups on a predefined persistent system (eg. NFS, SWIFT, ...)
   version: 0.1.0
 
 servers:
