@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  title: "Deamon Backup API"
+  title: "Doc-Node API"
   description: "Deamon used to periodically generate volume's backup and send of this
-    backups"
+    backups on a predefined persistent system (eg. NFS, SWIFT, ...)"
   version: "1.0.0"
 host: "localhost:5555"
 basePath: "/api/v1.0.0"
@@ -37,7 +37,9 @@ paths:
                 items:
                   $ref: "#/definitions/Container"
         default:
-          $ref: "#/definitions/UnexpectedError"
+          description: "A general error"
+          schema:
+            $ref: "#/definitions/Error"
   /containers/{id}:
     get:
       tags:
@@ -65,7 +67,9 @@ paths:
           schema:
             $ref: "#/definitions/Error"
         default:
-          $ref: "#/definitions/UnexpectedError"
+          description: "A general error"
+          schema:
+            $ref: "#/definitions/Error"
   /containers/{id}/mounts:
     get:
       tags:
@@ -98,7 +102,9 @@ paths:
           schema:
             $ref: "#/definitions/Error"
         default:
-          $ref: "#/definitions/UnexpectedError"
+          description: "A general error"
+          schema:
+            $ref: "#/definitions/Error"
   /containers/{id}/backup:
     post:
       tags:
@@ -125,13 +131,15 @@ paths:
         400:
           description: "Bad request. Container ID is required and must be a string"
           schema:
-            $ref: "#/definitions/UnexpectedError"
+            $ref: "#/definitions/Error"
         404:
           description: "A container with the specified ID was not found"
           schema:
             $ref: "#/definitions/Error"
         default:
-          $ref: "#/definitions/UnexpectedError"
+          description: "A general error"
+          schema:
+            $ref: "#/definitions/Error"
   /volumes/list:
     get:
       tags:
@@ -150,11 +158,11 @@ paths:
                 items:
                   $ref: "#/definitions/Volume"
         default:
-          $ref: "#/definitions/UnexpectedError"
+          description: "A general error"
+          schema:
+            $ref: "#/definitions/Error"
 
 definitions:
-  UnexpectedError:
-    $ref: "#/definitions/Error"
   Port:
     type: "object"
     description: "An open port on a container"
