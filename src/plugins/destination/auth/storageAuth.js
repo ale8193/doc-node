@@ -1,5 +1,11 @@
 /**
- * Access storage's security informations in different modes
+ * Access storage's security informations in different modes.
+ * This module need these variables based on modes:
+ * <p>STORAGE_AUTH_MODE: define the mode</p>
+ * <p>if mode is 'vault': VAULT_ENDPOINT, VAULT_TOKEN</p>
+ * <p>if mode is 'environment': BACKUP_STORAGE_USER, BACKUP_STORAGE_PASSWORD</p>
+ * <p>if mode is 'docker_secrets': container with mounted directory /run/secrets/storage_user and /run/secrets/storage_password</p>
+ * <p>if mode is 'parameters': username string parameter and then password string parameter</p>
  * @module Sender/storageAuth
  */
 import fs from 'fs'
@@ -32,7 +38,7 @@ const TYPES = {
 const mode = process.env.STORAGE_AUTH_MODE || MODES.DEFAULT
 
 /**
- * This object allows to get auth information based on modes and type resolving Promise callbacks. 
+ * This object allows to get auth information based on modes and type resolving Promise callbacks.
  * How to use: authGetter\[mode\](type, resolve, reject, errorMsg)
  * @function
  * @name authGetter
@@ -70,7 +76,7 @@ const authGetter = {
  * @returns {Promise}
  * module:Sender/storageAuth~getUser
  */
-function getUser () {
+export function getUser () {
   return new Promise((resolve, reject) => {
     authGetter[mode](TYPES.USER, resolve, reject, 'User not found in ' + mode)
   })
@@ -81,7 +87,7 @@ function getUser () {
  * @returns {Promise}
  * module:Sender/storageAuth~getPassword
  */
-function getPassword () {
+export function getPassword () {
   return new Promise((resolve, reject) => {
     authGetter[mode](TYPES.PASSWORD, resolve, reject, 'Password not found in ' + mode)
   })
@@ -92,14 +98,8 @@ function getPassword () {
  * @returns {Promise}
  * module:Sender/storageAuth~getToken
  */
-function getToken () {
+export function getToken () {
   return new Promise((resolve, reject) => {
     reject(new Error('Not implemented'))
   })
-}
-
-export {
-  getUser,
-  getPassword,
-  getToken
 }

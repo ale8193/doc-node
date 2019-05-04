@@ -7,14 +7,14 @@ import vaultAPI from 'node-vault'
 
 const options = {
   apiVersion: 'v1',
-  endpoint: 'http://192.168.210.138:8200',
+  endpoint: process.env.VAULT_ENDPOINT,
   token: process.env.VAULT_TOKEN
 }
 
 const vault = vaultAPI(options)
 const vaultStorage = 'kv/data/doc_storage/'
 
-function getUser () {
+export function getUser () {
   return new Promise((resolve, reject) => {
     vault.read(vaultStorage + 'user').then(result => {
       let user = result.data.data.user
@@ -23,16 +23,11 @@ function getUser () {
   })
 }
 
-function getPassword () {
+export function getPassword () {
   return new Promise((resolve, reject) => {
     vault.read(vaultStorage + 'password').then(result => {
       let pw = result.data.data.password
       resolve(pw)
     }).catch(err => reject(err))
   })
-}
-
-export {
-  getUser,
-  getPassword
 }
