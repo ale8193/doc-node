@@ -3,16 +3,22 @@
  */
 
 import * as webdavSender from 'plugins/destination/webdav'
+import * as storageAuth from 'plugins/destination/auth/storageAuth'
 import { removeFileFromDir } from 'utility/utility'
 
 const config = {
   webdav: {
     host: 'http://localhost:8888/webdav',
-    path: '/backup',
-    user: 'admin',
-    password: 'admin'
+    path: '/backup'
   }
 }
+
+function initConfig () {
+  config.webdav.user = storageAuth.getUser().then(result => { return result }).catch(err => console.log(err))
+  config.webdav.password = storageAuth.getPassword().then(result => { return result }).catch(err => console.log(err))
+}
+
+initConfig()
 
 /**
  * Function to send a backup based on the configuration, specified in the config file
