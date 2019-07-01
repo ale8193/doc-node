@@ -16,6 +16,7 @@
     "dockerode": "^2.5.8",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
+    "node-vault": "^0.9.8",
     "webdav": "^2.6.0"
   },
   "devDependencies": {
