@@ -4,7 +4,8 @@
 
 import * as webdavSender from 'plugins/destination/webdav'
 import * as storageAuth from 'plugins/destination/auth/storageAuth'
-import { removeFileFromDir } from 'utility/utility'
+import { removeFile } from 'utility/utility'
+import path from 'path'
 
 const config = {
   webdav: {
@@ -14,8 +15,16 @@ const config = {
 }
 
 function initConfig () {
-  config.webdav.user = storageAuth.getUser().then(result => { return result }).catch(err => console.log(err))
-  config.webdav.password = storageAuth.getPassword().then(result => { return result }).catch(err => console.log(err))
+  storageAuth.getUser()
+    .then(user => {
+      config.webdav.user = user
+    })
+    .catch(err => console.log(err))
+  storageAuth.getPassword()
+    .then(password => {
+      config.webdav.password = password
+    })
+    .catch(err => console.log(err))
 }
 
 initConfig()
@@ -37,10 +46,10 @@ function sendBackup (filepath, filename) {
       .then(() => {
         // Invio su webdav
         const putFilePromise = webdavSender.putFile(filepath, filename)
-        // Elimino i file di backup nell'host e risolvo la promise
+        // Elimino il file di backup nell'host e risolvo la promise
         putFilePromise
           .then(() =>
-            removeFileFromDir(filepath)
+            removeFile(path.join(filepath, filename))
               .then(() => resolve({ sended: true }))
           )
           .catch(reject)
