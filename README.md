@@ -31,3 +31,13 @@ yarn docs
 ```
 ##### Swagger api documentation
 The `swagger.yml` with the openapi documentation is provided inside the root of the project.
+
+### Run on docker
+Firstly, build the image:
+```
+docker build -t doc-node .
+```
+Secondly, run the container:
+```
+docker run -d --name doc-node -p 5555:5555 -v /var/run/docker.sock:/var/run/docker.sock doc-node
+```
