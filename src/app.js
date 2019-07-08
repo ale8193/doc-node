@@ -21,8 +21,11 @@ app.use(cookieParser())
 const containersRouter = require('routes/api/containers')
 const volumesRouter = require('routes/api/volumes')
 
-app.use('/api/v' + process.env.npm_package_version + '/containers', containersRouter)
-app.use('/api/v' + process.env.npm_package_version + '/volumes', volumesRouter)
+// api version
+const apiVersion = '1.0.0'
+
+app.use('/api/v' + apiVersion + '/containers', containersRouter)
+app.use('/api/v' + apiVersion + '/volumes', volumesRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

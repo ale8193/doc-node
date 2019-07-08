@@ -4,7 +4,8 @@
 
 import * as webdavSender from 'plugins/destination/webdav'
 import * as storageAuth from 'plugins/destination/auth/storageAuth'
-import { removeFileFromDir } from 'utility/utility'
+import { removeFile } from 'utility/utility'
+import path from 'path'
 
 const config = {
   webdav: {
@@ -14,11 +15,23 @@ const config = {
 }
 
 function initConfig () {
-  config.webdav.user = storageAuth.getUser().then(result => { return result }).catch(err => console.log(err))
-  config.webdav.password = storageAuth.getPassword().then(result => { return result }).catch(err => console.log(err))
-}
+  return new Promise((resolve, reject) => {
+    let userPromise = storageAuth.getUser()
+      .then(user => {
+        config.webdav.user = user
+      })
+      .catch(err => reject(err))
+    let passwordPromise = storageAuth.getPassword()
+      .then(password => {
+        config.webdav.password = password
+      })
+      .catch(err => reject(err))
 
-initConfig()
+    Promise.all([userPromise, passwordPromise])
+      .then(resolve(true))
+      .catch(err => reject(err))
+  })
+}
 
 /**
  * Function to send a backup based on the configuration, specified in the config file
@@ -29,23 +42,26 @@ initConfig()
  */
 function sendBackup (filepath, filename) {
   return new Promise((resolve, reject) => {
-    // Init the webdav sender
-    webdavSender.init(config.webdav.user, config.webdav.password, {
-      host: config.webdav.host,
-      path: config.webdav.path
-    })
+    let initPromise = initConfig()
       .then(() => {
-        // Invio su webdav
-        const putFilePromise = webdavSender.putFile(filepath, filename)
-        // Elimino i file di backup nell'host e risolvo la promise
-        putFilePromise
-          .then(() =>
-            removeFileFromDir(filepath)
-              .then(() => resolve({ sended: true }))
-          )
-          .catch(reject)
+        // User and password getted can config webdav
+        return webdavSender.init(config.webdav.user, config.webdav.password, {
+          host: config.webdav.host,
+          path: config.webdav.path
+        })
       })
-      .catch(reject)
+
+    initPromise.then(() => {
+      // Webdav configured, can send the backups
+      webdavSender.putFile(filepath, filename)
+        .then(() =>
+          // File is sent, I can remove the backup from the host and resolve the promise
+          removeFile(path.join(filepath, filename))
+            .then(() => resolve({ sended: true }))
+            .catch(reject)
+        )
+        .catch(reject)
+    })
   })
 }
 

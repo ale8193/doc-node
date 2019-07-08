@@ -17,7 +17,7 @@ router.get('/', containersController.containersGET)
 router.get('/:id', containersController.containerByIdGET)
 
 /**
- * @route   GET api/<version>/containers/{id}/mount
+ * @route   GET api/<version>/containers/{id}/mounts
  * @desc    Returns an array of mounts object
  * @access  Private
  */

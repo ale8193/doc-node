@@ -4,4 +4,4 @@ COPY package.json /app
 RUN npm install
 COPY ./build/ /app
 CMD node index.js
-EXPOSE 3000
+EXPOSE 5555

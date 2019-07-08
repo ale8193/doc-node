@@ -61,8 +61,13 @@ function removeFileFromDir (directory) {
   })
 }
 
+function removeFile (filepath) {
+  return fsPromises.unlink(filepath)
+}
+
 export {
   dateToString,
   createDirectory,
-  removeFileFromDir
+  removeFileFromDir,
+  removeFile
 }
