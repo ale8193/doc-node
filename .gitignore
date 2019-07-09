@@ -97,3 +97,5 @@ typings/
 
 # Backup folder
 /backups/
+
+config.json

@@ -5,31 +5,47 @@
 import * as webdavSender from 'plugins/destination/webdav'
 import * as storageAuth from 'plugins/destination/auth/storageAuth'
 import { removeFile } from 'utility/utility'
+import { getSenderConfig } from 'plugins/config/index'
 import path from 'path'
 
-const config = {
-  webdav: {
-    host: 'http://localhost:8888/webdav',
-    path: '/backup'
-  }
-}
+const config = {}
 
 function initConfig () {
   return new Promise((resolve, reject) => {
-    let userPromise = storageAuth.getUser()
-      .then(user => {
-        config.webdav.user = user
-      })
-      .catch(err => reject(err))
-    let passwordPromise = storageAuth.getPassword()
-      .then(password => {
-        config.webdav.password = password
-      })
-      .catch(err => reject(err))
+    // Get config from file
+    const conf = getSenderConfig()
+    if (!conf.type) {
+      throw new Error('sender config type is required')
+    }
 
-    Promise.all([userPromise, passwordPromise])
-      .then(resolve(true))
-      .catch(err => reject(err))
+    // set the type of the configuration for the sender
+    if (conf.type === 'webdav') {
+      const webdavConf = {
+        host: conf.host,
+        path: conf.path
+      }
+
+      // Get the user and the password for webdav
+      let userPromise = storageAuth.getUser()
+        .then(user => {
+          webdavConf['user'] = user
+        })
+        .catch(err => reject(err))
+      let passwordPromise = storageAuth.getPassword()
+        .then(password => {
+          webdavConf['password'] = password
+        })
+        .catch(err => reject(err))
+
+      Promise.all([userPromise, passwordPromise])
+        .then(() => {
+          config['webdav'] = webdavConf
+          resolve(true)
+        })
+        .catch(err => reject(err))
+    } else {
+      throw new Error('sender type not valid')
+    }
   })
 }
 
