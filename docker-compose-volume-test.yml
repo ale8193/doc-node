@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:
+  volume_test:
+    image: "liubin/volume-test"
+    container_name: "volume-test"
+    volumes:
+      - "/srv/test:/var/lib/mysql"
+
+  git_lab:
+    image: "gitlab/gitlab-ce:latest"
+    container_name: "gitlab"
+    restart: "always"
+    hostname: "localhost"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://localhost'
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - "32769:80"
+      - "32767:443"
+      - "32768:22"
+    volumes:
+      - "/srv/gitlab/config:/etc/gitlab"
+      - "/srv/gitlab/logs:/var/log/gitlab"
+      - "/srv/gitlab/data:/var/opt/gitlab"
