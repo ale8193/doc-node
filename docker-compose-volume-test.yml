@@ -4,6 +4,7 @@ services:
   volume_test:
     image: "liubin/volume-test"
     container_name: "volume-test"
+    restart: "always"
     volumes:
       - "/srv/test:/var/lib/mysql"
 
